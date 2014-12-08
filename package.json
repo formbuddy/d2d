@@ -1,0 +1,16 @@
+{
+  "name": "d2d",
+  "version": "1.0.0",
+  "description": "Door 2 Door campaign software for Aam Aadmi Party",
+  "main": "d2d.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ajay R",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.10.4",
+    "express-handlebars": "^1.1.0",
+    "mongoose": "^3.8.20"
+  }
+}
