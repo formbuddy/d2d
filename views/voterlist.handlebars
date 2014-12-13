@@ -1,17 +1,171 @@
-<h2>Voter list</h2>
-<div class="table-responsive">
-  <table class="table">
+<style>
+.hidden {
+  display:none;
+}
+</style>
+<h2 align="center">Voter list</h2>
+<div class="table-responsive" align="center">
+  <table class="table table-condensed display compact" id="voterlist" cellpadding="0" cellspacing="0">
+    <thead>
     <tr>
-      <td><b>S.No.</b></td>
-      <td><b>EName</b></td>
-      <td><b>House No.</b></td>
+      <th class="col-md-1">S.No.</th>
+      <th class="col-md-10">EName</th>
+      <th class="col-md-1">House No.</th>
     </tr>
+   </thead>
+   <tbody>
     {{#each voters}}
-      <tr>
-        <td>{{sno}}</td>
-        <td>{{ename}}</td>
-        <td>{{houseno}}</td>
+      <tr id="{{id}}" class="{{rowclass}}">
+        <td class="col-md-1"><a onclick="process('{{id}}', '{{rowclass}}', 'verify'); return false;" href="#">{{sno}}</a></td>
+        <td class="col-md-10">
+            <a onclick="$('#div_{{id}}').removeClass('hidden'); toggleDonor('{{id}}'); return false;" href="#">{{ename}}</a>
+            <div id="div_{{id}}" class="hidden">
+                <form id="frm_{{id}}" role="form">
+                    <input type="hidden" name="id" value="{{id}}">
+                    <div class="form-group">
+                        <label class="radio-inline">
+                            <input type="radio" name="votertype_{{id}}" id="supporter_{{id}}" value="S" {{#if supporter}}checked{{/if}}> Supporter
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="votertype_{{id}}" id="neutral_{{id}}" value="N" {{#if neutral}}checked{{/if}}> Neutral
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" name="votertype_{{id}}" id="antagonist_{{id}}" value="A"{{#if antagonist}}checked{{/if}}> Antagonist
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Mobile Number" id="mobile_{{id}}" {{#if mobile}}value="{{mobile}}"{{/if}}>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="E-mail ID" id="email_{{id}}" {{#if email}}value="{{email}}"{{/if}}>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="volunteer_{{id}}" value="Volt" {{#if volunteer}}checked{{/if}}> Voluntr
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="donorcheck_{{id}}" value="Donor" onClick="toggleDonor('{{id}}');" {{#if donor}}checked{{/if}}> Donor
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="checkbox" id="WA_{{id}}" value="WA" {{#if wp}}checked{{/if}}> WA
+                        </label>
+                    </div>
+
+                    <div class="hide" id="donor_{{id}}">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Amount" id="amount_{{id}}" {{#if amount}}value="{{amount}}"{{/if}}>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="Receipt" id="receipt_{{id}}" {{#if receipt}}value="{{receipt}}"{{/if}}>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="button" class="btn btn-primary" onclick="updateDetails('{{id}}')">Submit</button>
+                        <button type="button" class="btn btn-danger" onclick="hideDiv('{{id}}')">Cancel</button>
+                    </div>
+
+                </form>
+            </div>
+        </td>
+        <td class="col-md-1"><a onclick="process('{{id}}', '{{rowclass}}', 'deletion'); return false;" href="#">{{houseno}}</a></td>
       </tr>
     {{/each}}
+    </tbody>
   </table>
 </div>
+<script type="text/javascript">
+$(document).ready(function() {
+  $('#voterlist').DataTable();
+  } );
+
+function process(id, current, action){
+
+    var newclass;
+    var message;
+    if(action == 'verify'){
+        newclass = 'success';
+        message = "Verify voter?";
+    }
+    else if(action == 'deletion'){
+        newclass = 'danger';
+        message = "Mark for deletion?";
+    }
+
+    var answer = confirm(message);
+    if (answer) {
+      $.post('/process',{
+        id     : id,
+        action : action
+      }, function(data, status){
+        document.getElementById(id).className = newclass;
+      });
+    } else {
+      return false;
+    }
+}
+
+function toggleDonor(id){
+    if($('#donorcheck_' + id).is(':checked')) {
+        $('#donor_' + id).removeClass('hide');
+    }
+    else {
+        $('#donor_' + id).addClass('hide');
+    }
+}
+
+function hideDiv(id){
+  $('#div_' + id).addClass('hidden');
+}
+
+function updateDetails(id){
+    var volunteer = 'N';
+    var d2dstatus = 'N';
+    var wp = 'N';
+    var donor ='N';
+    var email = $('#email_' + id).val();
+    var mobile = $('#mobile_' + id).val();
+    var receipt = $('#receipt_' + id).val();
+    var amount = $('#amount_' + id).val();
+
+    if($('#volunteer_' + id).is(':checked')) {
+        volunteer = 'Y';
+    }
+    if($('#WP_' + id).is(':checked')) {
+        wp = 'Y';
+    }
+    if($('#donorcheck_' + id).is(':checked')) {
+        donor = 'Y'
+    }
+
+    if($('#supporter_' + id).is(':checked')) {
+        d2dstatus = 'S';
+    }
+    else if($('#neutral_' + id).is(':checked')) {
+        d2dstatus = 'N';
+    }
+    else if($('#antagonist_' + id).is(':checked')) {
+        d2dstatus = 'A';
+    }
+
+
+    $.post('/process',{
+        id     : id,
+        action: 'modification',
+        volunteer: volunteer,
+        d2dstatus: d2dstatus,
+        wp: wp,
+        donor: donor,
+        email: email,
+        mobile: mobile,
+        receipt: receipt,
+        amount: amount
+    }, function(data, status){
+        document.getElementById(id).className = 'warning';
+        hideDiv(id);
+    });
+
+}
+</script>

@@ -1,0 +1,13 @@
+{
+  "uploadOnSave": true,
+  "hostname": "ayyorama.webhop.me",
+  "port": "22",
+  "target": "/home/ajayr/nodejs/d2d",
+  "ignore": [
+    "[.git/**",
+    "node_modules]"
+  ],
+  "username": "ajayr",
+  "transport": "scp",
+  "useAgent": true
+}
