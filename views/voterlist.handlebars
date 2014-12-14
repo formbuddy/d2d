@@ -63,7 +63,7 @@
                     </div>
 
                     <div class="form-group">
-                        <button type="button" class="btn btn-primary" onclick="updateDetails('{{id}}')">Submit</button>
+                        <button type="button" class="btn btn-primary" onclick="updateDetails('{{id}}', '{{rowclass}}')">Submit</button>
                         <button type="button" class="btn btn-danger" onclick="hideDiv('{{id}}')">Cancel</button>
                     </div>
 
@@ -85,6 +85,10 @@ function process(id, current, action){
 
     var newclass;
     var message;
+    if(current){
+        alert("Voter already processed! Cannot proceed.");
+        return false;
+    }
     if(action == 'verify'){
         newclass = 'success';
         message = "Verify voter?";
@@ -100,7 +104,13 @@ function process(id, current, action){
         id     : id,
         action : action
       }, function(data, status){
-        document.getElementById(id).className = newclass;
+        if(data == 'Done'){
+            document.getElementById(id).className = newclass;
+        }
+        else {
+            alert("You are not logged in!");
+            window.location.replace('/');
+        }
       });
     } else {
       return false;
@@ -120,15 +130,23 @@ function hideDiv(id){
   $('#div_' + id).addClass('hidden');
 }
 
-function updateDetails(id){
+function updateDetails(id, current){
+    if(current){
+        alert("Voter already processed! Cannot proceed.");
+        return false;
+    }
     var volunteer = 'N';
     var d2dstatus = 'N';
     var wp = 'N';
     var donor ='N';
-    var email = $('#email_' + id).val();
-    var mobile = $('#mobile_' + id).val();
-    var receipt = $('#receipt_' + id).val();
-    var amount = $('#amount_' + id).val();
+    var email = '';
+    email = $('#email_' + id).val();
+    var mobile = '';
+    mobile = $('#mobile_' + id).val();
+    var receipt = '';
+    receipt = $('#receipt_' + id).val();
+    var amount = '';
+    amount = $('#amount_' + id).val();
 
     if($('#volunteer_' + id).is(':checked')) {
         volunteer = 'Y';
@@ -150,6 +168,19 @@ function updateDetails(id){
         d2dstatus = 'A';
     }
 
+    if(email){
+        var re = /\S+@\S+\.\S+/;
+        if(!re.test(email)) {
+            alert("Invalid email address");
+            return false;
+        }
+    }
+
+    if(donor == 'Y' && (!receipt || !amount)){
+        alert("Please fill in receipt/amount details!");
+        return false;
+    }
+
 
     $.post('/process',{
         id     : id,
@@ -163,8 +194,14 @@ function updateDetails(id){
         receipt: receipt,
         amount: amount
     }, function(data, status){
-        document.getElementById(id).className = 'warning';
-        hideDiv(id);
+        if(data == 'Done'){
+            document.getElementById(id).className = 'warning';
+            hideDiv(id);
+        }
+        else {
+            alert("You are not logged in!");
+            window.location.replace('/');
+        }
     });
 
 }
