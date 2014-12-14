@@ -1,27 +1,13 @@
 var express = require('express');
-var pv = require('./lib/processvoter.js');
-
-var mongoose = require('mongoose');
-var opts = {
-    server: {
-        socketOptions: { keepAlive: 1 }
-    }
-};
-mongoose.connect('mongodb://localhost/d2d', opts);
-var Voterlist = require('./models/voterlist.js');
-
-// Authentication module.
-var auth = require('http-auth');
-var basic = auth.basic({
-  realm: "Restricted area",
-  file: __dirname + "/../users.htpasswd" // gevorg:gpass, Sarah:testpass ...
-});
-
 
 var app = express();
 var bodyParser = require('body-parser');
-app.use(auth.connect(basic));
+var cookieParser = require('cookie-parser');
 
+var dbConfig = require('./lib/db.js');
+var mongoose = require('mongoose');
+// Connect to DB
+mongoose.connect(dbConfig.url);
 
 //setup handlebars and view engine
 var handlebars = require('express-handlebars')
@@ -36,75 +22,30 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+app.use(cookieParser());
 
-app.get('/voterlist', function(req, res){
-    Voterlist.find({}, function(err, voters){
-        var context = {
-            voters: voters.map(function(voter){
-                var rowclass = '';
-                if(voter.mod == 'V') {
-                    rowclass = 'success';
-                }
-                else if(voter.mod == 'C'){
-                    rowclass = 'danger';
-                }
-                else if(voter.mod == 'E'){
-                    rowclass = 'warning';
-                }
+// Configuring Passport
+var passport = require('passport');
+var session = require('express-session');
+app.use(session({
+    secret: 'randomstring',
+    resave: false,
+    saveUninitialized: true
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
-                var supporter;
-                if(voter.d2dstatus == 'S'){
-                  supporter = 1;
-                }
-                var neutral;
-                if(voter.d2dstatus == 'N'){
-                  neutral = 1;
-                }
-                var antagonist;
-                if(voter.d2dstatus == 'A'){
-                  antagonist = 1;
-                }
+// Using the flash middleware provided by connect-flash
+// to store messages in session and displaying in templates
+var flash = require('connect-flash');
+app.use(flash());
 
-                var volunteer;
-                if(voter.volunteer == 'Y'){
-                  volunteer = 1;
-                }
-                var donor;
-                if(voter.donor == 'Y'){
-                  donor = 1;
-                }
-                var wp;
-                if(voter.wp == 'Y'){
-                  wp = 1;
-                }
+// Initialize Passport
+var initPassport = require('./lib/initPassport.js');
+initPassport(passport);
 
-                return {
-                    id       : voter._id,
-                    sno      : voter.sno,
-                    ename    : voter.ename,
-                    houseno  : voter.houseno,
-                    rowclass : rowclass,
-                    supporter : supporter,
-                    neutral  : neutral,
-                    antagonist : antagonist,
-                    volunteer : volunteer,
-                    donor : donor,
-                    wp : wp,
-                    mobile: voter.mobile,
-                    email: voter.email,
-                    receipt: voter.receipt,
-                    amount: voter.amount
-                }
-            })
-        };
-        res.render('voterlist', context);
-    });
-});
-
-app.post('/process', function(req, res){
-    var status = pv.processvoter(req, Voterlist);
-    res.send("Done");
-});
+var routes = require('./lib/routes.js')(passport);
+app.use('/', routes);
 
 app.listen(app.get('port'), '0.0.0.0', function(){
     console.log('Express started on http://0.0.0.0:' +

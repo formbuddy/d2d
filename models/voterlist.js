@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var voterlistSchema = mongoose.Schema({
-  acno      : String,
+  acno      : Number,
   partno    : Number,
   sno       : Number,
   ename     : String,

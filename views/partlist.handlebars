@@ -1,0 +1,17 @@
+<h2>Part list</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <th>Part No.</th>
+            <th>Name</th>
+        </thead>
+        <tbody>
+            {{#each parts}}
+            <tr>
+                <td><a href="/ac/{{acno}}/{{partno}}">{{partno}}</a></td>
+                <td>{{partname}}</td>
+                {{/each}}
+            </tr>
+        </tbody>
+    </table>
+</div>

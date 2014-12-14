@@ -1,0 +1,17 @@
+<h2>Section list</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <th>Section No.</th>
+            <th>Name</th>
+        </thead>
+        <tbody>
+            {{#each secs}}
+            <tr>
+                <td><a href="/ac/{{acno}}/{{partno}}/{{secno}}/voterlist">{{secno}}</a></td>
+                <td>{{secname}}</td>
+                {{/each}}
+            </tr>
+        </tbody>
+    </table>
+</div>

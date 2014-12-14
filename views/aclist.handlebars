@@ -1,0 +1,17 @@
+<h2>AC list</h2>
+<div class="table-responsive">
+    <table class="table table-striped">
+        <thead>
+            <th>AC No.</th>
+            <th>Name</th>
+        </thead>
+        <tbody>
+            {{#each acs}}
+                <tr>
+                    <td><a href="/ac/{{acno}}">{{acno}}</a></td>
+                    <td>{{name}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</div>
