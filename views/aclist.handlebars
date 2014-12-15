@@ -4,12 +4,18 @@
         <thead>
             <th>AC No.</th>
             <th>Name</th>
+            {{#if admin}}
+            <th>Report</th>
+            {{/if}}
         </thead>
         <tbody>
             {{#each acs}}
                 <tr>
-                    <td><a href="/ac/{{acno}}">{{acno}}</a></td>
+                    <td>{{#unless ../admin}}<a href="/ac/{{acno}}">{{/unless}}{{acno}}{{#unless ../admin}}</a>{{/unless}}</td>
                     <td>{{name}}</td>
+                    {{#if ../admin}}
+                    <td><a href="/dr/{{acno}}">Download</a></td>
+                    {{/if}}
                 </tr>
             {{/each}}
         </tbody>

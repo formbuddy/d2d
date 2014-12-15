@@ -44,7 +44,27 @@ app.use(flash());
 var initPassport = require('./lib/initPassport.js');
 initPassport(passport);
 
-var routes = require('./lib/routes.js')(passport);
+var ConnectRoles = require('connect-roles');
+var user = new ConnectRoles({
+  failureHandler: function (req, res, action) {
+    // optional function to customise code that runs when
+    // user fails authorisation
+    var accept = req.headers.accept || '';
+    res.status(403);
+    res.send('Access Denied - You don\'t have permission to: ' + action);
+  }
+});
+app.use(user.middleware());
+
+
+//admin users can access all pages
+user.use(function (req) {
+  if (req.user.role === 'admin') {
+    return true;
+  }
+});
+
+var routes = require('./lib/routes.js')(passport, user);
 app.use('/', routes);
 
 app.listen(app.get('port'), '0.0.0.0', function(){
