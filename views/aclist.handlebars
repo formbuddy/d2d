@@ -1,3 +1,6 @@
+<style>
+tr.clickableRow { cursor: pointer; }
+</style>
 <h2>AC list</h2>
 <div class="table-responsive">
     <table class="table table-striped">
@@ -10,8 +13,8 @@
         </thead>
         <tbody>
             {{#each acs}}
-                <tr>
-                    <td>{{#unless ../admin}}<a href="/ac/{{acno}}">{{/unless}}{{acno}}{{#unless ../admin}}</a>{{/unless}}</td>
+                <tr{{#unless ../admin}} class='clickableRow' href='/ac/{{acno}}'{{/unless}}>
+                    <td>{{acno}}</td>
                     <td>{{name}}</td>
                     {{#if ../admin}}
                     <td><a href="/dr/{{acno}}">Download</a></td>
@@ -21,3 +24,10 @@
         </tbody>
     </table>
 </div>
+<script type="text/javascript">
+$(document).ready(function($) {
+    $(".clickableRow").click(function() {
+        window.document.location = $(this).attr("href");
+    });
+});
+</script>

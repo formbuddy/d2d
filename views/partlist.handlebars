@@ -1,3 +1,6 @@
+<style>
+tr.clickableRow { cursor: pointer; }
+</style>
 <h2>Part list</h2>
 <div class="table-responsive">
     <table class="table table-striped">
@@ -7,11 +10,18 @@
         </thead>
         <tbody>
             {{#each parts}}
-            <tr>
-                <td><a href="/ac/{{acno}}/{{partno}}">{{partno}}</a></td>
+            <tr class='clickableRow' href='/ac/{{acno}}/{{partno}}'>
+                <td>{{partno}}</td>
                 <td>{{partname}}</td>
                 {{/each}}
             </tr>
         </tbody>
     </table>
 </div>
+<script type="text/javascript">
+$(document).ready(function($) {
+    $(".clickableRow").click(function() {
+        window.document.location = $(this).attr("href");
+    });
+});
+</script>
