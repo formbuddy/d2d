@@ -9,6 +9,7 @@ tr.clickableRow { cursor: pointer; }
             <th>Name</th>
             {{#if admin}}
             <th>Report</th>
+            <th>Voters</th>
             {{/if}}
         </thead>
         <tbody>
@@ -18,6 +19,7 @@ tr.clickableRow { cursor: pointer; }
                     <td>{{name}}</td>
                     {{#if ../admin}}
                     <td><a href="/dr/{{acno}}">Download</a></td>
+                    <td>{{count}}</td>
                     {{/if}}
                 </tr>
             {{/each}}
