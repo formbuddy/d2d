@@ -9,7 +9,8 @@
     <thead>
     <tr>
       <th class="col-md-1">S.No.</th>
-      <th class="col-md-10">EName</th>
+      <th class="col-md-7">EName</th>
+      <th class="col-md-3">EPIC No.</th>
       <th class="col-md-1">House No.</th>
     </tr>
    </thead>
@@ -17,7 +18,7 @@
     {{#each voters}}
       <tr id="{{id}}" class="{{rowclass}}">
         <td class="col-md-1"><a onclick="process('{{id}}', '{{rowclass}}', 'verify'); return false;" href="#">{{sno}}</a></td>
-        <td class="col-md-10">
+        <td class="col-md-7">
             <a onclick="$('#div_{{id}}').removeClass('hidden'); toggleDonor('{{id}}'); return false;" href="#">{{ename}}</a>
             <div id="div_{{id}}" class="hidden">
                 <form id="frm_{{id}}" role="form">
@@ -70,6 +71,7 @@
                 </form>
             </div>
         </td>
+        <td class="col-md-3">{{idno}}</a></td>
         <td class="col-md-1"><a onclick="process('{{id}}', '{{rowclass}}', 'deletion'); return false;" href="#">{{houseno}}</a></td>
       </tr>
     {{/each}}
@@ -78,8 +80,10 @@
 </div>
 <script type="text/javascript">
 $(document).ready(function() {
-  $('#voterlist').DataTable();
-  } );
+  $('#voterlist').DataTable({
+    "lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]]
+    });
+  });
 
 function process(id, current, action){
 
