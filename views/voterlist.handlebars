@@ -3,6 +3,7 @@
   display:none;
 }
 </style>
+
 <h2 align="center">Voter list</h2>
 <div class="table-responsive" align="center">
   <table class="table table-condensed display compact" id="voterlist" cellpadding="0" cellspacing="0">
@@ -21,6 +22,7 @@
         <td class="col-md-7">
             <a onclick="$('#div_{{id}}').removeClass('hidden'); toggleDonor('{{id}}'); return false;" href="#">{{ename}}</a>
             <div id="div_{{id}}" class="hidden">
+                EPIC: {{idno}} <a onclick="addVoter('{{houseno}}'); return false;" href="#">Add</a>
                 <form id="frm_{{id}}" role="form">
                     <input type="hidden" name="id" value="{{id}}">
                     <div class="form-group">
@@ -71,7 +73,7 @@
                 </form>
             </div>
         </td>
-        <td class="col-md-3">{{idno}}</a></td>
+        <td class="col-md-3">{{idno}}</td>
         <td class="col-md-1"><a onclick="process('{{id}}', '{{rowclass}}', 'deletion'); return false;" href="#">{{houseno}}</a></td>
       </tr>
     {{/each}}
@@ -81,9 +83,64 @@
 <script type="text/javascript">
 $(document).ready(function() {
   $('#voterlist').DataTable({
-    "lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]]
+    "lengthMenu": [[100, 200, 500, -1], [100, 200, 500, "All"]],
+    "columnDefs": [{ "targets": [ 2 ], "visible": false}]
     });
   });
+
+function addVoter(houseno){
+  var acno = {{acno}};
+  var partno = {{partno}};
+  var section = {{section}};
+  var form = '<form id="newform">' +
+             '<div class="form-group">' +
+             '<label for="newname">Name</label>' +
+             '<input type="text" class="form-control" id="newname" placeholder="Name">' +
+             '</div>' +
+             '<div class="form-group">' +
+             '<label for="newmobile">Mobile</label>' +
+             '<input type="text" class="form-control" id="newmobile" placeholder="Mobile">' +
+             '</div>' +
+             '</form>';
+  bootbox.dialog({
+    title: "Add new voter",
+    message: form,
+    buttons: {
+      success: {
+        label: 'Save',
+        class: 'btn-success',
+        callback: function(){
+          var newname = '';
+          newname = $('#newname').val();
+          var mobile = '';
+          newmobile = $('#newmobile').val();
+          if(!newname || !newmobile){
+            alert("Both fields are required!");
+            return false;
+          }
+
+          $.post('/addvoter',{
+            acno    : acno,
+            section : section,
+            partno  : partno,
+            houseno : houseno,
+            name    : newname,
+            mobile  : newmobile
+          }, function(data, status){
+            if(data == 'Done'){
+              alert("Successfully added!");
+            }
+            else {
+              alert("You are not logged in!");
+              window.location.replace('/');
+            }
+          });
+
+        }
+      }
+    }
+  });
+}
 
 function process(id, current, action){
 
