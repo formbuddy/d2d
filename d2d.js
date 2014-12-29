@@ -64,6 +64,15 @@ user.use(function (req) {
   }
 });
 
+user.use('acvolunteer', function (req) {
+  if(req.user.ac.indexOf(req.params.acno) >= 0){
+    return true;
+  }
+  else{
+    return false;
+  }
+});
+
 var routes = require('./lib/routes.js')(passport, user);
 app.use('/', routes);
 
