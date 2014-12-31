@@ -12,7 +12,7 @@
       <th class="col-md-1">S.No.</th>
       <th class="col-md-7">EName</th>
       <th class="col-md-3">EPIC No.</th>
-      <th class="col-md-1">House No.</th>
+      <th class="col-md-1 text-right">House No.</th>
     </tr>
    </thead>
    <tbody>
@@ -22,7 +22,7 @@
         <td class="col-md-7">
             <a onclick="$('#div_{{id}}').removeClass('hidden'); toggleDonor('{{id}}'); return false;" href="#">{{ename}}</a>
             <div id="div_{{id}}" class="hidden">
-                EPIC: {{idno}} <a onclick="addVoter('{{houseno}}'); return false;" href="#">Add</a>
+                EPIC: {{idno}} <a onclick="addVoter('{{houseno}}'); return false;" href="#">New Voter</a>
                 <form id="frm_{{id}}" role="form">
                     <input type="hidden" name="id" value="{{id}}">
                     <div class="form-group">
@@ -33,7 +33,7 @@
                             <input type="radio" name="votertype_{{id}}" id="neutral_{{id}}" value="N" {{#if neutral}}checked{{/if}}> Neutral
                         </label>
                         <label class="radio-inline">
-                            <input type="radio" name="votertype_{{id}}" id="antagonist_{{id}}" value="A"{{#if antagonist}}checked{{/if}}> Antagonist
+                            <input type="radio" name="votertype_{{id}}" id="antagonist_{{id}}" value="A"{{#if antagonist}}checked{{/if}}> Non supporter
                         </label>
                     </div>
 
@@ -74,7 +74,7 @@
             </div>
         </td>
         <td class="col-md-3">{{idno}}</td>
-        <td class="col-md-1"><a onclick="process('{{id}}', '{{rowclass}}', 'deletion'); return false;" href="#">{{houseno}}</a></td>
+        <td class="col-md-1 text-right"><a onclick="process('{{id}}', '{{rowclass}}', 'deletion'); return false;" href="#">{{houseno}}</a></td>
       </tr>
     {{/each}}
     </tbody>
