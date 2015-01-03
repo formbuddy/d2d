@@ -9,7 +9,13 @@ tr.clickableRow { cursor: pointer; }
             <th>Name</th>
             {{#if admin}}
             <th>Report</th>
-            <th>Voters</th>
+            <th>Verified</th>
+            <th>To delete</th>
+            <th>Correction</th>
+            <th>Supporters</th>
+            <th>Non-supporters</th>
+            <th>Neutral</th>
+            <th>Processed / Total</th>
             {{/if}}
         </thead>
         <tbody>
@@ -19,7 +25,13 @@ tr.clickableRow { cursor: pointer; }
                     <td>{{name}}</td>
                     {{#if ../admin}}
                     <td><a href="/dr/{{acno}}">Download</a></td>
-                    <td>{{count}}</td>
+                    <td>{{verified}}</td>
+                    <td>{{deletion}}</td>
+                    <td>{{correction}}</td>
+                    <td class="bg-success">{{supporter}}</td>
+                    <td class="bg-danger">{{antagonist}}</td>
+                    <td class="bg-warning">{{neutral}}</td>
+                    <td>{{processed}} / {{total}}</td>
                     {{/if}}
                 </tr>
             {{/each}}
